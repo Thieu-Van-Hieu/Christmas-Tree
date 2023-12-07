@@ -5,9 +5,9 @@ $(document).ready(function () {
 
     const speedPresets = [
         { speed_light: 100, speed_loop: 100 },
-        { speed_light: 200, speed_loop: 200 },
-        { speed_light: 100, speed_loop: 400 },
         { speed_light: 200, speed_loop: 400 },
+        { speed_light: 100, speed_loop: 400 },
+        { speed_light: 200, speed_loop: 200 },
         { speed_light: 500, speed_loop: 2000 }
         
     ];
