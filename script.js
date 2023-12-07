@@ -1,12 +1,15 @@
 $(document).ready(function () {
     let currentIndex = 0;
+    let isAnimating = false;
+    let intervalId;
 
     const speedPresets = [
+        { speed_light: 100, speed_loop: 100 },
         { speed_light: 200, speed_loop: 200 },
         { speed_light: 100, speed_loop: 400 },
         { speed_light: 200, speed_loop: 400 },
-        { speed_light: 500, speed_loop: 2000 },
-        { speed_light: 100, speed_loop: 100 }
+        { speed_light: 500, speed_loop: 2000 }
+        
     ];
 
     let { speed_light, speed_loop } = speedPresets[currentIndex];
@@ -20,26 +23,45 @@ $(document).ready(function () {
         });
     }
 
-    // Gọi hàm toggleBaubleLights để bắt đầu hiệu ứng
-    toggleBaubleLights();
+    function startAnimation() {
+        // Ngừng animation hiện tại trước khi bắt đầu animation mới
+        stopAnimation();
 
-    // Gọi hàm toggleBaubleLights mỗi 400ms
-    const intervalId = setInterval(toggleBaubleLights, speed_loop);
+        // Gọi hàm toggleBaubleLights để bắt đầu hiệu ứng
+        toggleBaubleLights();
+
+        // Gọi hàm toggleBaubleLights mỗi speed_loop ms
+        return setInterval(toggleBaubleLights, speed_loop);
+    }
+
+    function stopAnimation() {
+        $('.bauble').removeClass('light');
+        clearInterval(intervalId);
+    }
 
     // Thêm chức năng cho button
     $('#changeSpeedButton').click(function () {
-        currentIndex = (currentIndex + 1) % speedPresets.length;
+        if (!isAnimating) {
+            isAnimating = true;
 
-        // Lấy giá trị mới của speed_light và speed_loop từ mảng
-        ({ speed_light, speed_loop } = speedPresets[currentIndex]);
+            currentIndex = (currentIndex + 1) % speedPresets.length;
 
-        // Dừng interval hiện tại
-        clearInterval(intervalId);
+            // Lấy giá trị mới của speed_light và speed_loop từ mảng
+            ({ speed_light, speed_loop } = speedPresets[currentIndex]);
 
-        // Gọi lại hàm toggleBaubleLights với giá trị mới
-        toggleBaubleLights();
+            // Dừng animation hiện tại
+            stopAnimation();
 
-        // Thiết lập lại interval với giá trị mới của speed_loop
-        intervalId = setInterval(toggleBaubleLights, speed_loop);
+            // Bắt đầu animation mới
+            intervalId = startAnimation();
+
+            // Thiết lập thời gian chờ trước khi cho phép click lại
+            setTimeout(function () {
+                isAnimating = false;
+            }, speed_loop * 5); // Chờ đến khi animation kết thúc
+        }
     });
+
+    // Bắt đầu animation mặc định
+    intervalId = startAnimation();
 });
